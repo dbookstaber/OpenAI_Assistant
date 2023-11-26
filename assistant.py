@@ -1,27 +1,22 @@
 """
-This is a simple example of an OpenAI Assistant with Functions, created by David Bookstaber.
-The functions give the Assistant the ability to generate random numbers and strings,
-    which is something a base Assistant cannot do.
+A simple OpenAI Assistant with Functions, created by David Bookstaber.
+The functions defined here in functions.py give the Assistant the ability to
+    generate random numbers and strings, which is something a base Assistant cannot do.
 
 This module is designed to be used by gui.py, which provides a minimal terminal consisting of
-- an input textbox for the user to type a message for the assistant, and
+- an input textbox for the user to type a message for the assistant
 - an output textbox to display the assistant's response
 
-The user/assistant interactions are also written to AssistantLog.md.
-
+User/assistant interactions are also written to LOGFILE (AssistantLog.md).
 The complete OpenAI interactions are encoded in JSON and printed to STDOUT.
 
-**Requirements:**
-- You will need an OPENAI_API_KEY, which should be entered in a local .env file
+When creating the assistant, this module also stores the Assistant ID in .env, so as
+    to avoid recreating it in the future.  (A list of assistants that have been created
+    with your OpenAI account can be found at https://platform.openai.com/assistants)
+
+REQUIREMENT: You will need an OPENAI_API_KEY, which should be stored in .env
     See https://platform.openai.com/api-keys
-
-When creating the assistant, this module also stores the Assistant ID in .env
-    to avoid recreating it in the future.
-
-A list of assistants that have been created with your OpenAI account can be found at
-    https://platform.openai.com/assistants
 """
-
 import json
 import os
 import time
@@ -34,9 +29,10 @@ OpenAI.api_key = os.getenv('OPENAI_API_KEY')
 ASSISTANT_ID = os.getenv('ASSISTANT_ID')
 
 LOGFILE = 'AssistantLog.md'  # We'll store all interactions in this file
-AIresponse = '-AIresponse-'  # GUI event key
+AI_RESPONSE = '-AIresponse-'  # GUI event key for Assistant responses
 
-def show_json(obj):  # Readable JSON output
+def show_json(obj):
+    """Formats JSON for more readable output."""
     return json.dumps(json.loads(obj.model_dump_json()), indent=2)
 
 class Assistant:
@@ -46,6 +42,8 @@ class Assistant:
             dotenv.load_dotenv()
             OpenAI.api_key = os.getenv('OPENAI_API_KEY')
         self.client = OpenAI()
+        self.run = None
+        self.message = None
         global ASSISTANT_ID
         if ASSISTANT_ID is None:  # Create the assistant
             assistant = self.client.beta.assistants.create(
@@ -61,6 +59,7 @@ class Assistant:
         self.create_AI_thread()
 
     def create_AI_thread(self):
+        """Creates an OpenAI Assistant thread, which maintains context for a user's interactions."""
         print('Creating assistant thread...')
         self.thread = self.client.beta.threads.create()
         print(show_json(self.thread))
@@ -68,6 +67,7 @@ class Assistant:
             f.write(f'# {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\nBeginning {self.thread.id}\n\n')
 
     def wait_on_run(self, window):
+        """Waits for an OpenAI assistant run to finish and handles the response."""
         print('Waiting for assistant response...')
         while self.run.status == "queued" or self.run.status == "in_progress":
             self.run = self.client.beta.threads.runs.retrieve(thread_id=self.thread.id, run_id=self.run.id)
@@ -94,9 +94,18 @@ class Assistant:
                     f.write(m.content[0].text.value)
                 f.write('\n\n---\n')
             # Callback to GUI with list of messages added after the user message we sent
-            window.write_event_value(AIresponse, new_messages)
+            window.write_event_value(AI_RESPONSE, new_messages)
 
-    def send_message(self, window, message_text):  # Adds a message to the thread and sends to assistant
+    def send_message(self, window, message_text: str):
+        """
+        Send a message to the assistant.
+
+        Parameters
+        ----------
+        window : PySimpleGUI.window
+            GUI element with .write_event_value() callback method, which will receive the Assistant's response.
+        message_text : str
+        """
         self.message = self.client.beta.threads.messages.create(self.thread.id,
                                                 role = "user",
                                                 content = message_text)

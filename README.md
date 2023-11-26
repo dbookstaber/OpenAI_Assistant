@@ -2,8 +2,8 @@
 1. Enter your OPENAI_API_KEY in a local .env file.
 2. Run gui.py
 
-This is a simple demonstration of an OpenAI Assistant with Functions.
-The functions here give the Assistant the ability to generate random numbers and strings,
+This is a simple demonstration of an OpenAI Assistant with Functions, including multiple callbacks for multiple tools.
+The function tools here give the Assistant the ability to generate random numbers and strings,
     which is something a base Assistant cannot do.
 * The GUI is minimal.  The user/assistant interactions are also written to `AssistantLog.md`.
 * The complete OpenAI interactions (which are mostly encoded in JSON) are printed to `STDOUT`.
@@ -13,6 +13,8 @@ The functions here give the Assistant the ability to generate random numbers and
 **Requirements:** You will need an `OPENAI_API_KEY`, which should be entered in a local `.env` file.  
     See https://platform.openai.com/api-keys
 
+## Screenshot
+![Screenshot](Screenshot.jpg)
 
 # Sample `AssistantLog.md`
 ## 2023-11-26 11:58:36

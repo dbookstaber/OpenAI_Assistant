@@ -1,3 +1,6 @@
+"""
+Minimal GUI for Assistant
+"""
 import threading
 import PySimpleGUI as sg
 from assistant import *
@@ -24,9 +27,9 @@ def main():
             window[OUTPUT].print('Sending:\n\t' + message, c='blue')
             window['Input'].Update('')  # Clear the input text
             threading.Thread(target=AI.send_message, args=(window, message), daemon=True).start()
-        if event == AIresponse:
+        if event == AI_RESPONSE:
             window[OUTPUT].print('\n[Received response:]', c='red')
-            for m in values[AIresponse]:
+            for m in values[AI_RESPONSE]:
                 window[OUTPUT].print(f"{m.role}: {m.content[0].text.value}")
             window[OUTPUT].print('[End response.]', c='red')
 
