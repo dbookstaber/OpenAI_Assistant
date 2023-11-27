@@ -5,7 +5,7 @@
 This is a simple demonstration of an OpenAI Assistant with Functions, including multiple callbacks for multiple tools.
 The function tools here give the Assistant the ability to generate random numbers and strings,
     which is something a base Assistant cannot do.
-* The GUI is minimal.  The user/assistant interactions are also written to `AssistantLog.md`.
+* The GUI is minimal.  The user/assistant interactions are also written to [`AssistantLog.md`](#sample-assistantlogmd).
 * The complete OpenAI interactions (which are mostly encoded in JSON) are printed to `STDOUT`.
 * When creating the assistant, this code stores the Assistant ID in `.env` to avoid recreating it in the future.  A list of assistants that have been created in your OpenAI account can be found at
     https://platform.openai.com/assistants
