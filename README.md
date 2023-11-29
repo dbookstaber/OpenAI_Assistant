@@ -1,3 +1,5 @@
+Note: Subsequent to this project, I published [an app that demos _all_ of the Assistant tools here](https://github.com/dbookstaber/OpenAI_Assist_All_Tools).
+
 # QuickStart
 1. Enter your OPENAI_API_KEY in a local .env file.
 2. Run gui.py
